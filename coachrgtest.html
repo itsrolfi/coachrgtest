@@ -1,0 +1,2773 @@
+<!DOCTYPE html>
+<html lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Sistema de Evaluacion</title>
+<link  rel="stylesheet" href="css/bootstrap.min.css"/>
+ <link  rel="stylesheet" href="css/bootstrap-theme.min.css"/>    
+ <link rel="stylesheet" href="css/main.css">
+ <link  rel="stylesheet" href="css/font.css">
+ <script src="js/jquery.js" type="text/javascript"></script>
+
+  <script src="js/bootstrap.min.js"  type="text/javascript"></script>
+ 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+<?php if(@$_GET['w'])
+{echo'<script>alert("'.@$_GET['w'].'");</script>';}
+?>
+<script>
+function validateForm() {var y = document.forms["form"]["name"].value;	var letters = /^[A-Za-z]+$/;if (y == null || y == "") {alert("El campo de Nombre debe de ser llenado.");return false;}var z =document.forms["form"]["college"].value;if (z == null || z == "") {alert("Debes de escribir el nombre del colegio.");return false;}var x = document.forms["form"]["email"].value;var atpos = x.indexOf("@");
+var dotpos = x.lastIndexOf(".");if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {alert("No es una direccion valida de correo.");return false;}var a = document.forms["form"]["password"].value;if(a == null || a == ""){alert("Debe de escribir un password para continuar");return false;}if(a.length<5 || a.length>25){alert("El password debe ser de 5 a 25 caracteres.");return false;}
+var b = document.forms["form"]["cpassword"].value;if (a!=b){alert("El password debe ser igual.");return false;}}
+</script>
+
+
+</head>
+<?php
+include_once 'dbConnection.php';
+?>
+
+<body>
+	<div class="header">
+	<div class="row">
+		<div class="col-md-2">
+		<img src="image/LogoKoanoFF2.jpg" width=170 height=80 alt="Coaching y Desarrollo" class="img-rounded"></div>
+		<div class="col-md-3">
+		<span class="logo">Prueba tus Habilidades</span>
+		</div>
+		<div class="col-md-2">
+		<a href="#" class="pull-right btn sub1" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Entrar</b></span></a>
+		</div>
+		<div class="col-md-2">
+		<img src="image/RGE2018.png" width=180 height=80 alt="Coach Ricardo Gonzalez" class="img-rounded">
+		</div>
+
+
+	<!--sign in modal start-->
+	<div class="modal fade" id="myModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content title1">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title title1"><span style="color:orange">Entrar...</span></h4>
+	      </div>
+	      <div class="modal-body">
+	        <form class="form-horizontal" action="login.php?q=index.php" method="POST">
+	<fieldset>
+
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-3 control-label" for="email"></label>  
+	  <div class="col-md-6">
+	  <input id="email" name="email" placeholder="Escribe tu correo aqui" class="form-control input-md" type="email">
+	    
+	  </div>
+	</div>
+
+
+	<!-- Password input-->
+	<div class="form-group">
+	  <label class="col-md-3 control-label" for="password"></label>
+	  <div class="col-md-6">
+	    <input id="password" name="password" placeholder="Escribe un Password" class="form-control input-md" type="password">
+	    
+	  </div>
+	</div>
+
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+	        <button type="submit" class="btn btn-primary">Entrar</button>
+			</fieldset>
+	</form>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<!--sign in modal closed-->
+
+	</div><!--header row closed-->
+</div>
+
+<div class="bg1">
+<div class="row">
+
+<div class="col-md-8"></div>
+<div class="col-md-4 panel">
+
+<!-- sign in form begins -->  
+  <form class="form-horizontal" name="form" action="sign.php?q=account.php" onSubmit="return validateForm()" method="POST">
+<fieldset>
+
+
+<!-- Text input Nombre-->
+<div class="form-group">
+  <label class="col-md-10 control-label" for="name"></label>  
+  <div class="col-md-10">
+  <input id="name" name="name" placeholder="Escribe tu nombre" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+<!-- Text input Nombre de escuela-->
+<?php
+$result = mysqli_query($con,"SELECT * FROM escuelas ORDER BY nescuela DESC") or die('Error');
+if ($result->num_rows > 0) //si la variable tiene al menos 1 fila entonces seguimos con el codigo
+{
+    $combobit="";
+    while ($row = $result->fetch_array(MYSQLI_ASSOC)) 
+    {
+        $combobit .=" <option value='".$row['nescuela']."'>".$row['nescuela']."</option>"; //concatenamos el los options para luego ser insertado en el HTML
+    }
+}
+else
+{
+    echo "No hubo resultados";
+}
+echo "El nombre de tu escuela es:";
+?>
+
+<div class="form-group">
+  <label class="col-md-10 control-label" for="name"></label>  
+  <div class="col-md-10">
+    <select id="college" name="college" class="form-control input-md" type="text">
+       <?php echo $combobit; ?>
+   </select>
+  </div>
+</div>
+
+<!-- Text input Matricula-->
+<div class="form-group">
+  <label class="col-md-10 control-label" for="matricula"></label>  
+  <div class="col-md-10">
+  <input id="maricula" name="matricula" placeholder="Escribe tu Matricula" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+
+<!-- Text input Correo-->
+<div class="form-group">
+  <label class="col-md-10 control-label title1" for="email"></label>
+  <div class="col-md-10">
+    <input id="email" name="email" placeholder="Escribe tu correo electronico" class="form-control input-md" type="email">
+    
+  </div>
+</div>
+
+
+<!-- Text input password-->
+<div class="form-group">
+  <label class="col-md-10 control-label" for="password"></label>
+  <div class="col-md-10">
+    <input id="password" name="password" placeholder="Escribe un passowrd" class="form-control input-md" type="password">
+    
+  </div>
+</div>
+
+<!-- Text input confirma tu password-->
+<div class="form-group">
+  <label class="col-md-10 control-label" for="cpassword"></label>
+  <div class="col-md-10">
+    <input id="cpassword" name="cpassword" placeholder="Confirma tu Password" class="form-control input-md" type="password">
+    
+  </div>
+</div>
+
+<?php if(@$_GET['q7'])
+{ echo'<p style="color:red;font-size:15px;">'.@$_GET['q7'];}?>
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-10 control-label" for=""></label>
+  <div class="col-md-10"> 
+    <input  type="submit" class="sub" value="Registrar..." class="btn btn-primary"/>
+  </div>
+</div>
+
+</fieldset>
+</form>
+</div><!--col-md-6 end-->
+</div></div>
+</div><!--container end-->
+
+
+</div></div></div></div>
+<!--Footer start-->
+<div class="row footer">
+<div class="col-md-3 box">
+ <a href="http://www.koandh.com" target="_blank">Acerca de nosotros</a>
+</div>
+<div class="col-md-3 box">
+<a href="#" data-toggle="modal" data-target="#login">Admin Login</a></div>
+<div class="col-md-3 box">
+<a href="#" data-toggle="modal" data-target="#developers">Desarrolladores</a>
+</div>
+<div class="col-md-3 box">
+<a href="feedback.php" target="_blank">Comentarios</a></div></div>
+<!-- Modal For Developers-->
+<div class="modal fade title1" id="developers">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" style="font-family:'typo' "><span style="color:orange">Developers</span></h4>
+      </div>
+	  
+      <div class="modal-body">
+        <p>
+		<div class="row">
+		<div class="col-md-4">
+		 <img src="image/fotolaov.JPG" width=100 height=100 alt="Luis Ortega" class="img-rounded">
+		 </div>
+		 <div class="col-md-5">
+		<a href="https://www.facebook.com/Optima-Dual-Solutions-125350158132106/" style="color:#202020; font-family:'typo' ; font-size:18px" title="Find on Facebook">Optima Dual Solutions</a>
+		<h4 style="color:#202020; font-family:'typo' ;font-size:16px" class="title1">55 1406 4283</h4>
+		<h4 style="font-family:'typo' ">lantonio.orteg@gmail.com</h4>
+		<h4 style="font-family:'typo' ">Optima Dual Solutions</h4></div></div>
+		</p>
+      </div>
+    
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--Modal for admin login-->
+	 <div class="modal fade" id="login">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title"><span style="color:orange;font-family:'typo' ">AUTENTIFICATE</span></h4>
+      </div>
+      <div class="modal-body title1">
+<div class="row">
+<div class="col-md-3"></div>
+<div class="col-md-6">
+<form role="form" method="post" action="admin.php?q=index.php">
+<div class="form-group">
+<input type="text" name="uname" maxlength="20"  placeholder="Usuario Administrador" class="form-control"/> 
+</div>
+<div class="form-group">
+<input type="password" name="password" maxlength="15" placeholder="Password Admin" class="form-control"/>
+</div>
+<div class="form-group" align="center">
+<input type="submit" name="login" value="Entrar" class="btn btn-primary" />
+</div>
+</form>
+</div><div class="col-md-3"></div></div>
+      </div>
+      <!--<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>-->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--footer end-->
+
+
+</body>
+</html>
+
+Menú del estudiante:
+<!DOCTYPE html>
+<html lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>DOMINANCIA Y EMOCIONALIDAD </title>
+<link  rel="stylesheet" href="css/bootstrap.min.css"/>
+ <link  rel="stylesheet" href="css/bootstrap-theme.min.css"/>    
+ <link rel="stylesheet" href="css/main.css">
+ <link  rel="stylesheet" href="css/font.css">
+ <script src="js/jquery.js" type="text/javascript"></script>
+
+  <script src="js/bootstrap.min.js"  type="text/javascript"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+ <!--alert message-->
+<?php if(@$_GET['w'])
+{echo'<script>alert("'.@$_GET['w'].'");</script>';}
+?>
+<!--alert message end-->
+
+</head>
+<?php
+include_once 'dbConnection.php';
+?>
+<body>
+
+<!-- cambio de encabezado -->
+<div class="header">
+	<div class="row">
+		<div class="col-md-2">
+		<img src="image/LogoKoanoFF2.jpg" width=170 height=75 alt="Coaching y Desarrollo" class="img-rounded"></div>
+		<div class="col-md-3">
+		<span class="logo">Prueba tus Habilidades</span>
+		</div>
+		<div class="col-md-2">
+		<img src="image/RGE2018.png" width=170 height=75 alt="Coach Ricardo Gonzalez" class="img-rounded">
+		</div>
+
+<div class="col-md-3">
+
+<?php
+ include_once 'dbConnection.php';
+session_start();
+  if(!(isset($_SESSION['email']))){
+header("location:index.php");
+	}
+	else
+	{
+	$name = $_SESSION['name'];
+	$email=$_SESSION['email'];
+
+	include_once 'dbConnection.php';
+	echo '<span class="pull-right top title1" ><span class="log1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;&nbsp;Hola,</span> <a href="account.php?q=1" class="log1">'.$name.'</a>
+	</div>
+	<div class="col-md-2">';
+	echo '<span class="pull-right top title1" ><a href="logout.php?q=account.php" class="log"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Salir</button></a></span>';
+	}
+?>
+</div>
+</div></div>
+<div class="bg">
+
+
+
+<!--navigation menu-->
+<nav class="navbar navbar-default title1">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><b>DualSolutions</b></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li <?php if(@$_GET['q']==1) echo'class="active"'; ?> ><a href="account.php?q=1"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;Inicio<span class="sr-only">(current)</span></a></li>
+        <li <?php if(@$_GET['q']==2) echo'class="active"'; ?>><a href="account.php?q=2"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp;Pruebas</a></li>
+		
+            <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Escribe una palabra ">
+        </div>
+        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;Buscar</button>
+      </form>
+      </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav><!--navigation menu closed-->
+<div class="container"><!--container start-->
+<div class="row">
+<div class="col-md-12">
+
+<!--home start-->
+<?php if(@$_GET['q']==1) {
+echo ' 
+<div class="row"><br><br>
+<span class="title1" style="margin-left:25%;font-size:30px;"><b>Bienvenidos a este portal</b></span><br><br><br><br>
+<span class="title1" style="margin-left:15%;font-size:22px;"><b>Favor de ir a la seccion de Pruebas para iniciar los test requeridos</b></span><br><br><br><br><br><br><br><br><br><br>';
+
+
+
+/*
+$result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total Preguntas</b></td><td><b>Marks</b></td><td><b>Tiempo Limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+if($rowcount == 0){
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="account.php?q=quiz&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+}
+else
+{
+echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title="This quiz is already solve by you" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=quizre&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+}
+}
+$c=0;
+echo '</table></div>';
+*/
+}?>
+
+<!--<span id="countdown" class="timer"></span>
+<script>
+var seconds = 40;
+    function secondPassed() {
+    var minutes = Math.round((seconds - 30)/60);
+    var remainingSeconds = seconds % 60;
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds; 
+    }
+    document.getElementById('countdown').innerHTML = minutes + ":" +    remainingSeconds;
+    if (seconds == 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('countdown').innerHTML = "Buzz Buzz";
+    } else {    
+        seconds--;
+    }
+    }
+var countdownTimer = setInterval('secondPassed()', 1000);
+</script>-->
+
+<!--home closed-->
+
+
+<!--quiz 1 start-->
+<?php
+if(@$_GET['q']== 'quiz' && @$_GET['step']== 2) {
+$eid=@$_GET['eid'];
+$sn=@$_GET['n'];
+$total=@$_GET['t'];
+
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opción de acuerdo a lo que se te pregunte. </b></span>';
+
+
+$q=mysqli_query($con,"SELECT * FROM questions WHERE eid='$eid' AND sn='$sn' " );
+echo '<div class="panel" style="margin:5%">';
+while($row=mysqli_fetch_array($q) )
+{
+$qns=$row['qns'];
+$qid=$row['qid'];
+echo '<b>Pregunta &nbsp;'.$sn.'&nbsp;:<br />'.$qns.'</b><br /><br />';
+}
+$q=mysqli_query($con,"SELECT * FROM options WHERE qid='$qid' " );
+echo '<form action="update.php?q=quiz&step=2&eid='.$eid.'&n='.$sn.'&t='.$total.'&qid='.$qid.'" method="POST"  class="form-horizontal">
+<br />';
+
+while($row=mysqli_fetch_array($q) )
+{
+$option=$row['option'];
+$optionid=$row['optionid'];
+$respopt=$row['respopt'];
+echo'<input type="radio" name="ans" value="'.$respopt.'"> '.$option.'<br /><br />';
+
+}
+echo'<br /><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>&nbsp;Enviar Respuesta</button>
+
+</form></div>';
+
+
+//header("location:dash.php?q=4&step=2&eid=$id&n=$total");
+}
+
+
+
+
+
+
+//result display
+if(@$_GET['q']== 'result' && @$_GET['eid']) 
+{
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesión te dará tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
+
+echo '<br><br><br>';	
+	
+
+$eid=@$_GET['eid'];
+
+
+
+echo '</table></div>';
+
+
+
+}
+?>
+<!--quiz 1 end-->
+
+<?php
+//pagina de examenes
+if(@$_GET['q']== 2) 
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:22%;font-size:30px;"><b>Examenes Disponibles para Aplicar</b></span>';
+
+
+// Lista de examenes del tipo 1
+$result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total Preguntas</b></td><td><b>Tiempo Limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+if($rowcount == 0){
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="account.php?q=quiz&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+}
+else
+{
+echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title="Este cuestionario esta listo para que lo resuelvas" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=quizre&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+}
+}
+$c=0;
+//echo '</table></div>';
+
+// Lista de examenes del tipo 2
+$result = mysqli_query($con,"SELECT * FROM quiz2 ORDER BY date DESC") or die('Error');
+//echo  '<div class="panel"><table class="table table-striped title1">';
+//<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total Preguntas</b></td><td><b>Marks</b></td><td><b>Tiempo Limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];  // numero de intentos
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+if($rowcount == 0){
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="account.php?q=quiz2&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+}
+else
+{
+echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title=Este cuestionario esta listo para que lo resuelvas" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=quizre2&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+}
+}
+$c=0;
+echo '</table></div>';
+
+
+
+}
+// echo '</table></div>';}
+?>
+
+
+
+
+
+
+
+<!--Examen 2 start-->
+
+<?php if(@$_GET['q']==4) {
+
+
+
+
+$result = mysqli_query($con,"SELECT * FROM quiz2 ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total Preguntas</b></td><td><b>Marks</b></td><td><b>Tiempo Limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];  // numero de intentos
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+if($rowcount == 0){
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="account.php?q=quiz2&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+}
+else
+{
+echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title="This quiz is already solve by you" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=quizre2&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+}
+}
+$c=0;
+echo '</table></div>';
+
+}?>
+<!--<span id="countdown" class="timer"></span>
+<script>
+var seconds = 40;
+    function secondPassed() {
+    var minutes = Math.round((seconds - 30)/60);
+    var remainingSeconds = seconds % 60;
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds; 
+    }
+    document.getElementById('countdown').innerHTML = minutes + ":" +    remainingSeconds;
+    if (seconds == 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('countdown').innerHTML = "Buzz Buzz";
+    } else {    
+        seconds--;
+    }
+    }
+var countdownTimer = setInterval('secondPassed()', 1000);
+</script>-->
+
+<!--Examen 2 closed-->
+
+
+
+
+<!--quiz 2 start-->
+<?php
+if(@$_GET['q']== 'quiz2' && @$_GET['step']== 2) {
+$eid=@$_GET['eid'];
+$sn=@$_GET['n'];
+$total=@$_GET['t'];
+
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opción de acuerdo a lo que se te pregunte. </b></span>';
+
+
+$q=mysqli_query($con,"SELECT * FROM competencias WHERE eid='$eid' AND sn='$sn' " );
+echo '<div class="panel" style="margin:5%">';
+while($row=mysqli_fetch_array($q) )
+{
+$qns=$row['cname'];
+$qid=$row['cid'];
+$cclas=$row['cclas'];
+$cnivel=$row['cnivel'];
+
+//echo '<b>Compatencia &nbsp;'.$sn.'&nbsp;: '.$qns.' &nbsp; del segmento de: &nbsp;'.$cclas.'&nbsp;</b><br /><br />';
+echo '<b>Competencias de: &nbsp;'.$cclas.'&nbsp;</b><br /><br />';
+echo '<b>Compatencia &nbsp;'.$sn.'&nbsp;: '.$qns.' &nbsp;</b><br /><br />';
+}
+$q2=mysqli_query($con,"SELECT * FROM options WHERE qid='$qid' " );
+echo '<form action="update.php?q=quiz2&step=2&eid='.$eid.'&n='.$sn.'&t='.$total.'&qid='.$qid.'" method="POST"  class="form-horizontal">
+<br />';
+
+while($row=mysqli_fetch_array($q2) )
+{
+$option=$row['option'];
+$optionid=$row['optionid'];
+$respopt=$row['respopt'];
+echo'<select id="ans" name="ans" placeholder="test" class="form-control input-md" >
+   <option value="a">Califica esta competencia</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option> 
+  <option value="5">5</option> 
+  <option value="6">6</option> 
+  <option value="7">7</option> 
+  <option value="8">8</option> 
+  <option value="9">9</option> 
+  <option value="10">10</option> 
+  </select>
+<br /><br />';
+
+}
+echo'<br /><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>&nbsp;Enviar Respuesta</button>
+
+</form></div>';
+
+
+//header("location:dash.php?q=4&step=2&eid=$id&n=$total");
+}
+
+
+
+
+
+
+//result 2 display
+if(@$_GET['q']== 'result2' && @$_GET['eid']) 
+{
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesión te dará tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
+
+echo '<br><br><br>';
+	
+
+}
+?>
+<!--quiz 2 end-->
+
+
+
+
+
+
+
+</div></div></div></div>
+<!--Footer start-->
+<div class="row footer">
+<div class="col-md-3 box">
+<a href="http://www.koandh.com" target="_blank">Acerca de nosotros</a>
+</div>
+<div class="col-md-3 box">
+<a href="#" data-toggle="modal" data-target="#login">Admin Login</a></div>
+<div class="col-md-3 box">
+<a href="#" data-toggle="modal" data-target="#developers">Desarrolladores</a>
+</div>
+<div class="col-md-3 box">
+<a href="feedback.php" target="_blank">Comentarios</a></div></div>
+<!-- Modal For Developers-->
+<div class="modal fade title1" id="developers">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" style="font-family:'typo' "><span style="color:orange">Developers</span></h4>
+      </div>
+	  
+      <div class="modal-body">
+        <p>
+		<div class="row">
+		<div class="col-md-4">
+		 <img src="image/fotolaov.JPG" width=100 height=100 alt="Luis Ortega" class="img-rounded">
+		 </div>
+		 <div class="col-md-5">
+		<a href="https://www.facebook.com/Optima-Dual-Solutions-125350158132106/" style="color:#202020; font-family:'typo' ; font-size:18px" title="Find on Facebook">Optima Dual Solutions</a>
+		<h4 style="color:#202020; font-family:'typo' ;font-size:16px" class="title1">55 1406 4283</h4>
+		<h4 style="font-family:'typo' ">luis.ortega@optimaos.com</h4>
+		<h4 style="font-family:'typo' ">Optima Dual Solutions</h4></div></div>
+		</p>
+      </div>
+    
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--Modal for admin login-->
+	 <div class="modal fade" id="login">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+        <h4 class="modal-title"><span style="color:orange;font-family:'typo' ">ENTRAR</span></h4>
+      </div>
+      <div class="modal-body title1">
+<div class="row">
+<div class="col-md-3"></div>
+<div class="col-md-6">
+<form role="form" method="post" action="admin.php?q=index.php">
+<div class="form-group">
+<input type="text" name="uname" maxlength="20"  placeholder="Usuario Administrador" class="form-control"/> 
+</div>
+<div class="form-group">
+<input type="password" name="password" maxlength="15" placeholder="Password" class="form-control"/>
+</div>
+<div class="form-group" align="center">
+<input type="submit" name="login" value="Entrar" class="btn btn-primary" />
+</div>
+</form>
+</div><div class="col-md-3"></div></div>
+      </div>
+      <!--<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>-->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--footer end-->
+
+
+</body>
+</html>
+
+Menu Admin:
+
+<!DOCTYPE html>
+<html lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Admin || DASHBOARD </title>
+<link  rel="stylesheet" href="css/bootstrap.min.css"/>
+<link  rel="stylesheet" href="css/bootstrap-theme.min.css"/>    
+ <link rel="stylesheet" href="css/main.css">
+ <link  rel="stylesheet" href="css/font.css">
+ <script src="js/jquery.js" type="text/javascript"></script>
+ 
+ <!-- ChartJS -->
+	<script src="chart.js/Chart.js"></script>
+	<meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
+		<style>
+			canvas{}
+		</style>
+	</head>
+	
+  <script src="js/bootstrap.min.js"  type="text/javascript"></script>
+ 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+
+<script>
+$(function () {
+    $(document).on( 'scroll', function(){
+        console.log('scroll top : ' + $(window).scrollTop());
+        if($(window).scrollTop()>=$(".logo").height())
+        {
+             $(".navbar").addClass("navbar-fixed-top");
+        }
+
+        if($(window).scrollTop()<$(".logo").height())
+        {
+             $(".navbar").removeClass("navbar-fixed-top");
+        }
+    });
+});</script>
+</head>
+
+<body  style="background:#eee;">
+
+
+<div class="header">
+<div class="row">
+<div class="col-sm-3 col-md-6 col-lg-4">
+<span class="pull-right top logo">Dashboard del Aministrador</span></div>
+
+<?php
+ include_once 'dbConnection.php';
+session_start();
+$email=$_SESSION['email'];
+  if(!(isset($_SESSION['email']))){
+header("location:index.php");
+
+}
+else
+{
+$name = $_SESSION['name'];
+
+include_once 'dbConnection.php';
+echo '<span class="pull-right top title1" ><span class="log1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;&nbsp;Hola,</span> <a href="account.php" class="log1">'.$name.'</a>&nbsp;|&nbsp;<a href="logout.php?q=account.php" class="log"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Salir</button></a></span>';
+}?>
+
+</div></div>
+<!-- admin start-->
+
+<!--navigation menu-->
+<nav class="navbar navbar-default title1">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="dash.php?q=0"><b>Dashboard</b></a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li <?php if(@$_GET['q']==0) echo'class="active"'; ?>><a href="dash.php?q=0">Inicio<span class="sr-only">(current)</span></a></li>
+        <li <?php if(@$_GET['q']==1) echo'class="active"'; ?>><a href="dash.php?q=1">Usuarios</a></li>
+		<li <?php if(@$_GET['q']==2) echo'class="active"'; ?>><a href="dash.php?q=2">Clasificacion</a></li>
+		<li <?php if(@$_GET['q']==3) echo'class="active"'; ?>><a href="dash.php?q=3">Retroalimentacion</a></li>
+        <li class="dropdown <?php if(@$_GET['q']==4 || @$_GET['q']==5 || @$_GET['q']==6 || @$_GET['q']==7) echo'active"'; ?>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cuestionario<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="dash.php?q=4">Agregar Test MBrigs</a></li>
+            <li><a href="dash.php?q=5">Borrar Test MBrigs</a></li>
+            <li><a href="dash.php?q=6">Agregar Calibracion Competencias</a></li>
+            <li><a href="dash.php?q=7">Borrar Calibracion Competencias</a></li>
+          </ul>
+        </li>
+        <li <?php if(@$_GET['q']==8) echo'class="active"'; ?>><a href="dash.php?q=8">Resultados</a></li>
+        <li <?php if(@$_GET['q']==10) echo'class="active"'; ?>><a href="dash.php?q=10">Otros</a></li>
+      </ul>
+          </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<!--navigation menu closed-->
+
+<div class="container"><!--container start-->
+<div class="row">
+<div class="col-md-12">
+
+
+<!--home start-->
+<?php if(@$_GET['q']==0)
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:26%;font-size:30px;"><b>Examenes Disponibles para Aplicar</b></span>';
+
+// tabla 1 con examenes del tipo 1
+$result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Examenes tipo MBRIGS</b></td><td><b>Total de preguntas</b></td><td><b>Tiempo limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+	if($rowcount == 0){
+		echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+		<td><b><a href="account.php?q=quiz&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+	}
+	else
+	{
+	echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title="Este Test esta listo para resolver por ti" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+		<td><b><a href="update.php?q=quizre&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+	}
+}
+$c=0;
+echo '</table></div>';
+
+
+// tabla 2 con examenes del tipo 2
+$result = mysqli_query($con,"SELECT * FROM quiz2 ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Examen de Competencias</b></td><td><b>Total de preguntas</b></td><td><b>Tiempo limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+$q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid' AND email='$email'" )or die('Error98');
+$rowcount=mysqli_num_rows($q12);	
+if($rowcount == 0){
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="account.php?q=quiz2&step=2&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:#99cc32"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Iniciar</b></span></a></b></td></tr>';
+}
+else
+{
+echo '<tr style="color:#99cc32"><td>'.$c++.'</td><td>'.$title.'&nbsp;<span title="Este Test esta listo para resolver por ti" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td><td>'.$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=quizre2&step=25&eid='.$eid.'&n=1&t='.$total.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;<span class="title1"><b>ReIniciar</b></span></a></b></td></tr>';
+}
+}
+$c=0;
+echo '</table></div>';
+
+}
+?>
+<!--home closed-->
+
+<!-- ranking start -->
+<?php if(@$_GET['q']== 2) 
+{
+$name="";
+$gender="";
+$college="";
+
+$q=mysqli_query($con,"SELECT * FROM rank  ORDER BY score DESC " )or die('Error223');
+echo  '<div class="panel title">
+<table class="table table-striped title1" >
+<tr style="color:red">
+<td><b>Rango</b></td><td><b>Nombre</b></td><td><b>Gendero</b></td><td><b>Escuela</b></td><td><b>Calificacion</b></td>
+</tr>';
+$c=0;
+while($row=mysqli_fetch_array($q) )
+{
+$e=$row['email'];
+$s=$row['score'];
+$q12=mysqli_query($con,"SELECT * FROM user WHERE email='$e' " )or die('Error231');
+
+	while($row=mysqli_fetch_array($q12) )
+		{
+		$name=$row['name'];
+		$gender=$row['gender'];
+		$college=$row['college'];
+		}
+$c++;
+echo '<tr>
+<td style="color:#99cc32"><b>'.$c.'</b></td><td>'.$name.'</td><td>'.$gender.'</td><td>'.$college.'</td><td>'.$s.'</td></tr>';
+}
+echo '</table></div>';
+}
+
+?>
+<!-- ranking End -->
+
+
+
+<!--users start-->
+<?php if(@$_GET['q']==1)
+{
+
+echo '<div class="row">
+<span class="title1" style="margin-left:26%;font-size:30px;"><b>Usuarios Registrados</b></span>';
+
+$result = mysqli_query($con,"SELECT * FROM user") or die('Error');
+//echo  '<div class="panel"><table class="table table-striped title1">
+//<tr><td><b>Num</b></td><td><b>Nombre</b></td><td><b>Gendero</b></td><td><b>Escuela</b></td><td><b>Correo</b></td><td><b>Celular</b></td><td></td></tr>';
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Nombre</b></td><td><b>Escuela</b></td><td><b>Correo</b></td><td><b>Celular</b></td><td></td></tr>';
+
+
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$name = $row['name'];
+	$mob = $row['mob'];
+	$gender = $row['gender'];
+    $email = $row['email'];
+	$college = $row['college'];
+
+	echo '<tr><td>'.$c++.'</td><td>'.$name.'</td><td>'.$college.'</td><td>'.$email.'</td><td>'.$mob.'</td>
+	<td><a title="Delete User" href="update.php?demail='.$email.'"><b><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></b></a></td></tr>';
+}
+$c=0;
+echo '</table></div>';
+
+}
+?>
+<!--user end-->
+
+<!--feedback start-->
+<?php if(@$_GET['q']==3)
+{
+echo '<div class="row">
+<span class="title1" style="margin-left:26%;font-size:30px;"><b>Retroalimentacion de usuarios</b></span>';
+
+$result = mysqli_query($con,"SELECT * FROM `feedback` ORDER BY `feedback`.`date` DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr>
+<td><b>Num</b></td><td><b>Subject</b></td><td><b>Correo</b></td><td><b>Fecha</b></td><td><b>Tiempo</b></td><td><b>By</b></td><td></td><td></td>
+</tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$date = $row['date'];
+	$date= date("d-m-Y",strtotime($date));
+	$time = $row['time'];
+	$subject = $row['subject'];
+	$name = $row['name'];
+	$email = $row['email'];
+	$id = $row['id'];
+	echo '<tr>
+	<td>'.$c++.'</td>
+	<td><a title="Click para abrir feedback" href="dash.php?q=3&fid='.$id.'">'.$subject.'</a></td><td>'.$email.'</td><td>'.$date.'</td><td>'.$time.'</td><td>'.$name.'</td>
+	<td><a title="Abrir Feedback" href="dash.php?q=3&fid='.$id.'"><b><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></b></a></td>
+	<td><a title="Borrar Feedback" href="update.php?fdid='.$id.'"><b><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></b></a></td>
+	</tr>';
+}
+echo '</table></div>';
+}
+?>
+<!--feedback closed-->
+
+
+<!--feedback reading portion start-->
+<?php if(@$_GET['fid'])
+{
+echo '<br />';
+$id=@$_GET['fid'];
+$result = mysqli_query($con,"SELECT * FROM feedback WHERE id='$id' ") or die('Error');
+while($row = mysqli_fetch_array($result)) {
+	$name = $row['name'];
+	$subject = $row['subject'];
+	$date = $row['date'];
+	$date= date("d-m-Y",strtotime($date));
+	$time = $row['time'];
+	$feedback = $row['feedback'];
+	
+echo '<div class="panel"<a title="Back to Archive" href="update.php?q1=2"><b><span class="glyphicon glyphicon-level-up" aria-hidden="true"></span></b></a><h2 style="text-align:center; margin-top:-15px;font-family: "Ubuntu", sans-serif;"><b>'.$subject.'</b></h1>';
+ echo '<div class="mCustomScrollbar" data-mcs-theme="dark" style="margin-left:10px;margin-right:10px; max-height:450px; line-height:35px;padding:5px;"><span style="line-height:35px;padding:5px;">-&nbsp;<b>DATE:</b>&nbsp;'.$date.'</span>
+<span style="line-height:35px;padding:5px;">&nbsp;<b>Time:</b>&nbsp;'.$time.'</span><span style="line-height:35px;padding:5px;">&nbsp;<b>By:</b>&nbsp;'.$name.'</span><br />'.$feedback.'</div></div>';}
+}
+?>
+<!--Feedback reading portion closed-->
+
+
+
+
+<!--add quiz start-->
+<?php
+if(@$_GET['q']==4 && !(@$_GET['step']))
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:40%;font-size:30px;"><b>Escriba detalles del cuestionario</b></span><br /><br />
+ <div class="col-md-3"></div><div class="col-md-6">   <form class="form-horizontal title1" name="form" action="update.php?q=addquiz"  method="POST">
+<fieldset>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="name"></label>  
+  <div class="col-md-12">
+  <input id="name" name="name" placeholder="Titulo del cuestionario" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="total"></label>  
+  <div class="col-md-12">
+  <input id="total" name="total" placeholder="Numero de preguntas...?" class="form-control input-md" type="number">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="right"></label>  
+  <div class="col-md-12">
+  <input id="right" name="right" placeholder="Escriba las marcar en respuestas correctas" class="form-control input-md" min="0" type="number">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="wrong"></label>  
+  <div class="col-md-12">
+  <input id="wrong" name="wrong" placeholder="Enter minus marks on wrong answer without sign" class="form-control input-md" min="0" type="number">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="time"></label>  
+  <div class="col-md-12">
+  <input id="time" name="time" placeholder="Escriba el tiempo limite para esta prueba" class="form-control input-md" min="1" type="number">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="tag"></label>  
+  <div class="col-md-12">
+  <input id="tag" name="tag" placeholder="Escriba un TAG para Identificar esta prueba" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="desc"></label>  
+  <div class="col-md-12">
+  <textarea rows="8" cols="8" name="desc" class="form-control" placeholder="Escriba un breve descripcion aqui..."></textarea>  
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label class="col-md-12 control-label" for=""></label>
+  <div class="col-md-12"> 
+    <input  type="submit" style="margin-left:45%" class="btn btn-primary" value="Continuar..." class="btn btn-primary"/>
+  </div>
+</div>
+
+</fieldset>
+</form></div>';
+
+}
+?>
+<!--add quiz end-->
+
+<!--add quiz step2 start-->
+<?php
+if(@$_GET['q']==4 && (@$_GET['step'])==2) 
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:40%;font-size:30px;"><b>Detalle del cuestionario</b></span><br /><br />
+ <div class="col-md-3"></div><div class="col-md-6"><form class="form-horizontal title1" name="form" action="update.php?q=addqns&n='.@$_GET['n'].'&eid='.@$_GET['eid'].'&ch=4 "  method="POST">
+<fieldset>
+';
+ 
+ for($i=1;$i<=@$_GET['n'];$i++)
+ {
+echo '<b>Pregunta numero&nbsp;'.$i.'&nbsp;:</><br /><!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="qns'.$i.' "></label>  
+  <div class="col-md-12">
+  <textarea rows="3" cols="5" name="qns'.$i.'" class="form-control" placeholder="Escribe tu pregunta '.$i.' aqui..."></textarea>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'1"></label>  
+  <div class="col-md-12">
+  <input id="'.$i.'1" name="'.$i.'1" placeholder="Escribe la opcion de respuesta a" class="form-control input-md" type="text">
+  </div>
+</div>
+
+
+<!-- Text input Relacion con la pregunta 1-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'2"></label>
+  <div class="col-md-12">
+    <select id="'.$i.'2" name="'.$i.'2" placeholder="Selecciona una Opcion que relacione a respuesta a '.$i.'" class="form-control input-md" >
+   <option value="a">Selecciona una Opcion</option>
+  <option value="Juicio">Juicio</option>
+  <option value="Percepción">Percepción</option>
+  <option value="Sensación">Sensación</option>
+  <option value="Intuición">Intuición</option> 
+  <option value="Extrovertido">Extrovertido</option> 
+  <option value="Introvertido">Introvertido</option> 
+  <option value="Emotividad">Emotividad</option> 
+  <option value="Pensamiento">Pensamiento</option> 
+  </select>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'3"></label>  
+  <div class="col-md-12">
+  <input id="'.$i.'3" name="'.$i.'3" placeholder="Escribe la opcion de respuesta b" class="form-control input-md" type="text">
+  </div>
+</div>
+
+<!-- Text input Relacion con la pregunta 1-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'4"></label>
+  <div class="col-md-12">
+    <select id="'.$i.'4" name="'.$i.'4" placeholder="Escribe La Relacion con la pregunta '.$i.'" class="form-control input-md" >
+   <option value="b">Selecciona una Opcion que relacione a respuesta b</option>
+   <option value="Juicio">Juicio</option>
+  <option value="Percepción">Percepción</option>
+  <option value="Sensación">Sensación</option>
+  <option value="Intuición">Intuición</option> 
+  <option value="Extrovertido">Extrovertido</option> 
+  <option value="Introvertido">Introvertido</option> 
+  <option value="Emotividad">Emotividad</option> 
+  <option value="Pensamiento">Pensamiento</option> 
+  </select>
+  </div>
+</div>
+
+<br />
+<b>-----------------------------------------------------</b>:<br />
+<select id="ans'.$i.'" name="ans'.$i.'" placeholder="No elegir nada aqui...." class="form-control input-md" >
+   <option value="c">Selecciona la respuesta para la pregunta '.$i.'</option>
+  </select><br /><br />'; 
+
+
+ }
+    
+echo '<div class="form-group">
+  <label class="col-md-12 control-label" for=""></label>
+  <div class="col-md-12"> 
+    <input  type="submit" style="margin-left:45%" class="btn btn-primary" value="Enviar" class="btn btn-primary"/>
+  </div>
+</div>
+
+</fieldset>
+</form></div>';
+
+
+
+}
+?>
+<!--add quiz step 2 end-->
+
+
+
+<!--remove quiz 1-->
+<?php if(@$_GET['q']==5)
+{
+
+$result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total de preguntas</b></td><td><b>Aciertos</b></td><td><b>Tiempo limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=rmquiz&eid='.$eid.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Borrar</b></span></a></b></td></tr>';
+}
+$c=0;
+echo '</table></div>';
+
+}
+?>
+<!--remove quiz 1 End-->
+
+
+<!--add quiz 2 start-->
+<?php
+if(@$_GET['q']==6 && !(@$_GET['step'])) 
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:27%;font-size:30px;"><b>Escriba Parametros del cuestionario</b></span><br /><br />
+ <div class="col-md-3"></div><div class="col-md-6">   <form class="form-horizontal title1" name="form" action="update.php?q=addquiz2"  method="POST">
+<fieldset>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="name"></label>  
+  <div class="col-md-12">
+  <input id="name" name="name" placeholder="Titulo del cuestionario" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="total"></label>  
+  <div class="col-md-12">
+  <input id="totalcompetencia" name="totalcompetencia" placeholder="Numero de competencias a trabajar...?" class="form-control input-md" type="number">
+    
+  </div>
+</div>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="time"></label>  
+  <div class="col-md-12">
+  <input id="time" name="time" placeholder="Escriba el tiempo limite para esta prueba" class="form-control input-md" min="1" type="number">
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="tag"></label>  
+  <div class="col-md-12">
+  <input id="tag" name="tag" placeholder="Escriba un TAG para Identificar esta prueba" class="form-control input-md" type="text">
+    
+  </div>
+</div>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="desc"></label>  
+  <div class="col-md-12">
+  <textarea rows="8" cols="8" name="desc" class="form-control" placeholder="Escriba un breve descripcion aqui..."></textarea>  
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label class="col-md-12 control-label" for=""></label>
+  <div class="col-md-12"> 
+    <input  type="submit" style="margin-left:45%" class="btn btn-primary" value="Continuar..." class="btn btn-primary"/>
+  </div>
+</div>
+
+</fieldset>
+</form></div>';
+
+
+
+}
+?>
+<!--add quiz 2 end-->
+
+
+<!--add quiz 2 step2 start-->
+<?php
+if(@$_GET['q']==6 && (@$_GET['step'])==2)
+{
+echo ' 
+<div class="row">
+<span class="title1" style="margin-left:27%;font-size:30px;"><b>Detalle del cuestionario ...</b></span><br /><br />
+ <div class="col-md-3"></div><div class="col-md-6"><form class="form-horizontal title1" name="form" action="update.php?q=addqns2&n='.@$_GET['n'].'&eid='.@$_GET['eid'].'&ch=4 "  method="POST">
+<fieldset>
+';
+ 
+ for($i=1;$i<=@$_GET['n'];$i++)
+ {
+echo '<b>Nombre de la competencia &nbsp;'.$i.'&nbsp;:</><br /><!-- Text input-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="qns'.$i.' "></label>  
+  <div class="col-md-12">
+  <textarea rows="3" cols="5" name="qns'.$i.'" class="form-control" placeholder="Escribe el nombre de la competencia '.$i.' aqui..."></textarea>  
+  </div>
+</div>
+
+<!-- Text input Clasificacion-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'1"></label>
+  <div class="col-md-12">
+    <select id="'.$i.'1" name="'.$i.'1" placeholder="Selecciona una clasificacion para la competencia '.$i.'" class="form-control input-md" >
+   <option value="a">Selecciona una Clasificacion</option>
+  <option value="Técnicas">Técnicas</option>
+  <option value="Habilidades">Habilidades</option>
+  
+  </select>
+  </div>
+</div>
+
+<!-- Text input Relacion con la pregunta 1-->
+<div class="form-group">
+  <label class="col-md-12 control-label" for="'.$i.'2"></label>
+  <div class="col-md-12">
+    <select id="'.$i.'2" name="'.$i.'2" placeholder="Nivel requerido para la competencia '.$i.'" class="form-control input-md" >
+   <option value="a">Selecciona nivel requerido para esta competencia</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option> 
+  <option value="5">5</option> 
+  <option value="6">6</option> 
+  <option value="7">7</option> 
+  <option value="8">8</option> 
+  <option value="9">9</option> 
+  <option value="10">10</option> 
+  </select>
+  </div>
+</div>
+
+<br />
+<b>-----------------------------------------------------</b>:<br />
+<br /><br />'; 
+
+
+ }
+    
+echo '<div class="form-group">
+  <label class="col-md-12 control-label" for=""></label>
+  <div class="col-md-12"> 
+    <input  type="submit" style="margin-left:45%" class="btn btn-primary" value="Enviar" class="btn btn-primary"/>
+  </div>
+</div>
+
+</fieldset>
+</form></div>';
+
+}
+?>
+<!--add quiz 2 step 2 end-->
+
+
+
+<!--remove quiz 2-->
+<?php if(@$_GET['q']==7)
+{
+
+$result = mysqli_query($con,"SELECT * FROM quiz2 ORDER BY date DESC") or die('Error');
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr><td><b>Num</b></td><td><b>Tema</b></td><td><b>Total de preguntas</b></td><td><b>Aciertos</b></td><td><b>Tiempo limite</b></td><td></td></tr>';
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$title = $row['title'];
+	$total = $row['total'];
+	$sahi = $row['sahi'];
+    $time = $row['time'];
+	$eid = $row['eid'];
+	echo '<tr><td>'.$c++.'</td><td>'.$title.'</td><td>'.$total.'</td><td>'.$sahi*$total.'</td><td>'.$time.'&nbsp;min</td>
+	<td><b><a href="update.php?q=rmquiz2&eid='.$eid.'" class="pull-right btn sub1" style="margin:0px;background:red"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;<span class="title1"><b>Borrar</b></span></a></b></td></tr>';
+}
+$c=0;
+echo '</table></div>';
+
+}
+?>
+<!--remove quiz 2 End -->
+
+
+
+<!--Resultados Parte1 laov-->
+<?php if(@$_GET['q']==8)
+{
+
+$result = mysqli_query($con,"SELECT * FROM user") or die('Error');
+
+echo  '<div class="panel"><table class="table table-striped title1">
+<tr>
+<td><b>Num</b></td>
+<td><b>Nombre</b></td>
+<td><b>Escuela</b></td>
+<td><b>Correo</b></td>
+<td><b>MBriggs</b></td>
+<td><b>Competencias</b></td>
+<td><b>Reporte</b></td>
+<td></td></tr>';
+
+
+$c=1;
+$idexamenmbriggs="5c9bc33490e87";
+$idexamencompetencias="5cace55fd91c5";
+
+while($row = mysqli_fetch_array($result)) {
+	$name = $row['name'];
+	$mob = $row['mob'];
+	$gender = $row['gender'];
+    $email = $row['email'];
+	$college = $row['college'];
+
+/*	echo '<tr><td>'.$c++.'</td><td>'.$name.'</td><td>'.$college.'</td><td>'.$email.'</td>
+	<td><center><a title="Reultados MBriggs" href="dash.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=MBriggs&eidcomp='.$idexamenmbriggs.'"><b><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></b></a></center></td>
+	<td><center><a title="Reultados Circulo Competencias" href="dash.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=Competencia&eidcomp='.$idexamencompetencias.'"><b><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></b></a></center></td>
+	<td><center><a title="Reporte Final" href="dash.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=ReporteFinal&eidcomp='.$idexamencompetencias.'"><b><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></b></a></center></td></tr>';
+*/
+
+echo '<tr><td>'.$c++.'</td><td>'.$name.'</td><td>'.$college.'</td><td>'.$email.'</td>
+	<td><center><a title="Reultados MBriggs" href="dash.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=MBriggs&eidcomp='.$idexamenmbriggs.'"><b><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></b></a></center></td>
+	<td><center><a title="Reultados Circulo Competencias" href="dash.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=Competencia&eidcomp='.$idexamencompetencias.'"><b><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></b></a></center></td>
+	<td><center><a title="Reporte Final" href="reportepdf01.php?q=9&nombre='.$name.'&correo='.$email.'&colleg='.$college.'&tprueba=ReporteFinal&idexamenmbriggs='.$idexamenmbriggs.'&idexamencompetencias='.$idexamencompetencias.'"><b><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></b></a></center></td></tr>';
+	
+}
+$c=0;
+echo '</table></div>';
+
+}
+?>
+<!--Resultados Parte1 laov end-->
+
+<!--Resultados Parte2 laov-->
+<?php if(@$_GET['q']==9) 
+{
+
+//echo "$name     $nombre";
+//var_dump($_GET);
+
+$hdate="2019";
+$hmail="lala@gmail.com";
+$heid="2222";
+$nombre=$_GET['nombre'];
+$eidcomp=$_GET['eidcomp'];
+$email=$_GET['correo'];
+$q2=mysqli_query($con,"SELECT * FROM history WHERE eid='$eidcomp' AND email='$email' " )or die('Error157'); 
+$rowcount=mysqli_num_rows($q2);
+
+if($rowcount==0){
+	echo "No se econtraron examenes para: $nombre - $eidcomp - $email";
+}
+else
+{
+	
+
+while($row=mysqli_fetch_array($q2)) 
+	{
+		$hsahi=$row['sahi'];
+		$hdate=$row['date'];
+		$hmail=$row['email'];
+		$heid=$row['eid'];
+	}
+
+/*echo "$hdate";
+echo "$hmail";
+echo "$heid";
+echo "$eidcomp";
+echo "$email";
+*/
+
+	
+$e=$_GET['tprueba'];
+switch($e)
+{
+case 'Competencia':
+//Parte 1 del reporte de competencia
+$q=mysqli_query($con,"SELECT * FROM rescomp WHERE eid='$eidcomp' AND email='$email' AND dateini='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Resultado de '.$e.'</h1></center>
+<left><class="title" style="color:#990000"><td>Nombre: '.$nombre.'</td><td> - Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';
+echo '<tr style="color:#66CCFF"><td>T.C. </td><td>Nombre de la competencia </td><td><center>Competencia Requerida</center></td><td><center>Competencia contestada</center></td><td></td></tr>';
+//echo '<tr style="color:#66CCFF"><td>T.C. </td><td>Total del test de '.$e.' </td><td>'.$rowcount.'</td><td></td></tr>';
+$c=0;
+$sumap=0;
+$sumap2=0;
+while($row=mysqli_fetch_array($q) )
+{
+$email=$row['email'];
+$cname=$row['cname'];
+$cclas=$row['cclas'];
+$cnivel=$row['cnivel'];
+$cnreal=$row['cnreal'];
+$dateini=$row['dateini'];
+$etiqueta[$c]=$cname;
+$datos1[$c]=$cnivel;
+$datos2[$c]=$cnreal;
+$c++;
+$sumap=$sumap+$cnreal;
+$sumap2=$sumap2+$cnivel;
+
+     echo '<tr style="color:#99cc32"><td>'.$cclas.'</td><td>'.$cname.' &nbsp;</td></span><td><center>'.$cnivel.'</center></td><td><center>'.$cnreal.'</center></td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></td></tr>'; 
+ 	 
+}
+     $promd=$sumap/$c;
+     $promd2=$sumap2/$c;
+echo '<tr style="color:#990000"><td></td><td><center>Promedio = &nbsp;</center></td><td><center>'.$promd2.'</center></td><td><center>'.$promd.'</center></td><td><span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td>';
+
+$q=mysqli_query($con,"SELECT * FROM rank WHERE  email='$email' " )or die('Error157');
+while($row=mysqli_fetch_array($q) )
+{
+$s=$row['score'];
+//echo '<tr style="color:#990000"><td>Calificacion Final&nbsp;<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
+}
+echo '</table></div>';
+
+//Parte 2 del reporte de competencia
+// inicia grafica....
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Rueda de Competencias</h1></center>
+<left><class="title" style="color:#990000"><td>Nombre: '.$nombre.'</td><td> - Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';
+
+echo '<TABLE BORDER>
+<TR><TD BGCOLOR="rgba(200,0,0,0.2)">_____</TD><TD> Nivel Requerido. </TD></TR>
+<TR><TD BGCOLOR="rgba(0,0,200,0.5)">_____</TD><TD> Nivel Contestado. </TD></TR>
+</TABLE>';
+
+echo '<center><div style="width:60%"><canvas id="canvas" height="850" width="850"></canvas></div></center>';
+	echo '<script>
+var radarChartData = {
+		labels: ["'.$etiqueta[0].'", "'.$etiqueta[1].'", "'.$etiqueta[2].'", "'.$etiqueta[3].'", "'.$etiqueta[4].'", "'.$etiqueta[5].'", "'.$etiqueta[6].'", "'.$etiqueta[7].'", "'.$etiqueta[8].'", "'.$etiqueta[9].'"],
+		datasets: [
+			{
+				label: "Nivel Requerido",
+				fillColor: "rgba(200,0,0,0.2)",
+				strokeColor: "rgba(200,0,0,0.2)",
+				pointColor: "rgba(200,0,0,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(200,0,0,0.2)",
+				data: ["'.$datos1[0].'", "'.$datos1[1].'", "'.$datos1[2].'", "'.$datos1[3].'", "'.$datos1[4].'", "'.$datos1[5].'", "'.$datos1[6].'", "'.$datos1[7].'", "'.$datos1[8].'", "'.$datos1[9].'"]
+			},
+			
+			{
+				label: "Nivel Calificado",
+				fillColor: "rgba(0,0,200,0.2)",
+				strokeColor: "rgba(0,0,200,0.5)",
+				pointColor: "rgba(0,0,200,0.5)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(0,0,200,0.5)",
+				data: ["'.$datos2[0].'", "'.$datos2[1].'", "'.$datos2[2].'", "'.$datos2[3].'", "'.$datos2[4].'", "'.$datos2[5].'", "'.$datos2[6].'", "'.$datos2[7].'", "'.$datos2[8].'", "'.$datos2[9].'"]
+			}
+		]
+		 
+	};
+	
+	window.onload = function(){
+		window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+			responsive: true
+		});
+	}
+	</script>';
+
+echo '</table></div>';
+
+// Termina Grafica
+//Parte 3 del reporte de competencia
+
+$q=mysqli_query($con,"SELECT * FROM rescomp WHERE eid='$eidcomp' AND email='$email' AND dateini='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Resumen de '.$e.'</h1></center>
+<left><class="title" style="color:#990000"><td>Nombre: '.$nombre.'</td><td> - Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';
+echo '<tr style="color:#66CCFF"><td>Nombre de la competencia </td><td><center>Porcentage de la competencia</center></td><td><center>Comentarios</center></td><td></td></tr>';
+//echo '<tr style="color:#66CCFF"><td>T.C. </td><td>Total del test de '.$e.' </td><td>'.$rowcount.'</td><td></td></tr>';
+$c=0;
+$sumap=0;
+$sumap2=0;
+$porcent=0;
+while($row=mysqli_fetch_array($q) )
+{
+$email=$row['email'];
+$cname=$row['cname'];
+$cclas=$row['cclas'];
+$cnivel=$row['cnivel'];
+$cnreal=$row['cnreal'];
+$dateini=$row['dateini'];
+$etiqueta[$c]=$cname;
+$datos1[$c]=$cnivel;
+$datos2[$c]=$cnreal;
+$c++;
+$sumap=$sumap+$cnreal;
+$sumap2=$sumap2+$cnivel;
+$porcent=number_format($cnreal/$cnivel*100,2);
+//$nombre_format_francais = number_format($número, 2, ',', ' ');
+
+switch($porcent)
+{
+case ($porcent>100):
+$MensageResul="Excede espectativa del 100%";
+$icono="glyphicon glyphicon-ok";
+$coloricono="color:#009900";
+break;
+
+case (($porcent>=90) && ($porcent<=100)):
+$MensageResul="Cumple satisfactoriamente ";
+$icono="glyphicon glyphicon-ok-circle";
+$coloricono="color:#99cc32";
+break;
+
+case (($porcent>=50) && ($porcent<=89)):
+$MensageResul="Cubierto, pero debe de Mejorar";
+$icono="glyphicon glyphicon-ok-circle";
+$coloricono="color:#99cc32";
+break;
+
+case ($porcent<50):
+$MensageResul="No alcanza porcentage minimo para cubrir esta competencia";
+$icono="glyphicon glyphicon-remove-circle";
+$coloricono="color:#990000";
+break;
+
+default:
+$MensageResul="No encontro ningun valor";
+$icono="glyphicon glyphicon-ban-circle";
+}
+
+     echo '<tr style="color:#000099"><td>'.$cname.' &nbsp;</td></span><td><center>'.$porcent.'%</center></td><td>'.$MensageResul.'</td><td style="'.$coloricono.'"><span class="'.$icono.'" aria-hidden="true"></td></tr>'; 
+ 	 
+}
+     $promd=$sumap/$c;
+     $promd2=$sumap2/$c;
+//echo '<tr style="color:#990000"><td></td><td><center>Promedio = &nbsp;</center></td><td><center>'.$promd2.'</center></td><td><center>'.$promd.'</center></td><td><span class='.$icono.' aria-hidden="true"></span></td>';
+
+/*$q=mysqli_query($con,"SELECT * FROM rank WHERE  email='$email' " )or die('Error157');
+while($row=mysqli_fetch_array($q) )
+{
+$s=$row['score'];
+//echo '<tr style="color:#990000"><td>Calificacion Final&nbsp;<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
+}
+*/
+echo '</table></div>';
+
+
+
+break;
+case 'MBriggs':
+
+// Inicia Paso 1 - Conteo de respuestas 
+$q=mysqli_query($con,"SELECT * FROM exaxuser WHERE eid='$eidcomp' AND email='$email' AND date2='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+if($rowcount==0){	echo "No se econtraron examenes para: $nombre   valor de $hdate  valor de $eidcomp";
+}
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Resultado de '.$e.'</h1></center>
+<left><class="title" style="color:#990000"><td>Nombre: '.$nombre.'</td><td> - Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';
+//echo '<tr style="color:#66CCFF"><td></td><td>Total del test de '.$e.'</td><td>'.$rowcount.'</td><td></td></tr>';
+$c=0;
+$sumap=0;
+while($row=mysqli_fetch_array($q) )
+{
+$email=$row['email'];
+//$cname=$row['cname'];
+//$cclas=$row['cclas'];
+//$cnivel=$row['cnivel'];
+$level=$row['level'];
+$dateini=$row['date'];
+
+$qjuicio=$row['juicio'];
+$qpercepcion=$row['percepcion'];
+$qsensacion=$row['sensacion'];
+$qintuicion=$row['intuicion'];
+$qextrovertido=$row['extrovertido'];
+$qintrovertido=$row['introvertido'];
+$qemotividad=$row['emotividad'];
+$qpensamiento=$row['pensamiento'];
+$c++;
+//$sumap=$sumap+$cnreal;
+
+     //echo '<tr style="color:#99cc32"><td>'.$cclas.'</td><td>'.$cname.' &nbsp;</td></span><td>'.$cnreal.'</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></td></tr>'; 
+ 	 
+}
+     echo '<tr style="color:#66CCFF"><td></td><td>Total de Preguntas</td><td></td><td>'.$level.'</td></tr>
+      <tr style="color:#99cc32"><td></td><td>Juicio &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qjuicio.'</td></tr>
+      <tr style="color:#99cc32"><td></td><td>Percepcion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qpercepcion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Sensacion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qsensacion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Intuicion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qintuicion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Extrovertido &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qextrovertido.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Introvertido &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qintrovertido.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Emotividad &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qemotividad.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Pensamiento &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$qpensamiento.'</td></tr>';
+     
+  //   $promd=$sumap/$c;
+//echo '<tr style="color:#990000"><td></td><td>Promedio = &nbsp;</td><td>'.$promd.'</td><td><span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td>';
+
+$q=mysqli_query($con,"SELECT * FROM rank WHERE  email='$email' " )or die('Error157');
+while($row=mysqli_fetch_array($q) )
+{
+$s=$row['score'];
+//echo '<tr style="color:#990000"><td>Calificacion Final&nbsp;<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
+}
+echo '</table></div>';
+
+// Inicia Paso 2 - Comparativa de Resultados
+// calculando promedios
+$pextrovertido=$qextrovertido/($qextrovertido+$qintrovertido)*100;
+$pintrovertido=$qintrovertido/($qextrovertido+$qintrovertido)*100;
+$pintuicion=$qintuicion/($qintuicion+$qsensacion)*100;
+$psensacion=$qsensacion/($qintuicion+$qsensacion)*100;
+$ppensamiento=$qpensamiento/($qpensamiento+$qemotividad)*100;
+$pemotividad=$qemotividad/($qpensamiento+$qemotividad)*100;
+$ppercepcion=$qpercepcion/($qjuicio+$qpercepcion)*100;
+$pjuicio=$qjuicio/($qjuicio+$qpercepcion)*100;
+
+
+$pextrovertido=number_format($pextrovertido, 2, '.', '');
+$pintrovertido=number_format($pintrovertido, 2, '.', '');
+$pintuicion=number_format($pintuicion, 2, '.', '');
+$psensacion=number_format($psensacion, 2, '.', '');
+$ppensamiento=number_format($ppensamiento, 2, '.', '');
+$pemotividad=number_format($pemotividad, 2, '.', '');
+$ppercepcion=number_format($ppercepcion, 2, '.', '');
+$pjuicio=number_format($pjuicio, 2, '.', '');
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Comparativa de  '.$e.'</h1></center>
+<left><class="title" style="color:#990000"><td>Nombre: '.$nombre.'</td><td> - Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';
+
+echo '<tr style="color:#66CCFF"><td></td><td>Nombre de la cualidad</td><td></td><td>Porcentage %</td></tr>
+      <tr style="color:#99cc32"><td></td><td>Juicio &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$pjuicio.'</td></tr>
+      <tr style="color:#99cc32"><td></td><td>Percepcion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$ppercepcion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Sensacion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$psensacion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Intuicion &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$pintuicion.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Extrovertido &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$pextrovertido.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Introvertido &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$pintrovertido.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Emotividad &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$pemotividad.'</td></tr> 
+      <tr style="color:#99cc32"><td></td><td>Pensamiento &nbsp;</td><td><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$ppensamiento.'</td></tr>';
+     
+echo '</table></div>';     
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Resumen de  '.$e.' para '.$nombre.'</h1></center>
+<left><class="title" style="color:#990000"><td></td><td>Correo: '.$email.'</td></left><br><table class="table table-striped title1" style="font-size:16px;font-weight:300;">';     
+$vmayor = array(
+    "a" => "bar",
+    "b" => "foo",
+    "c" => -100,
+    "d" => 100,
+);     
+     if($pextrovertido>$pintrovertido){
+	 	$mayor=$pextrovertido;
+	 	$menor=$pintrovertido;
+	 	$valorhabilidadmayor="extrovertido";
+	 	$valorhabilidadmenor="introvertido";
+	 	$vmayor["a"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pintrovertido;
+	 	$menor=$pextrovertido;
+	 	$valorhabilidadmayor="introvertido";
+	 	$valorhabilidadmenor="extrovertido";
+	 	$vmayor["a"] = $valorhabilidadmayor;
+	 }
+	 
+	if($pextrovertido=$pintrovertido)
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+	else
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+	
+
+     if($pintuicion>$psensacion){
+	 	$mayor=$pintuicion;
+	 	$menor=$psensacion;
+	 	$valorhabilidadmayor="intuitivo";
+	 	$valorhabilidadmenor="sensitivo";
+	 	$vmayor["b"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$psensacion;
+	 	$menor=$pintuicion;
+	 	$valorhabilidadmayor="sensitivo";
+	 	$valorhabilidadmenor="intuitivo";
+	 	$vmayor["b"] = $valorhabilidadmayor;
+	 }
+	 
+	if($pintuicion=$psensacion)
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+	else
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+
+     if($ppensamiento>$pemotividad){
+	 	$mayor=$ppensamiento;
+	 	$menor=$pemotividad;
+	 	$valorhabilidadmayor="racional";
+	 	$valorhabilidadmenor="emotivo";
+	 	$vmayor["c"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pemotividad;
+	 	$menor=$ppensamiento;
+	 	$valorhabilidadmayor="emotivo";
+	 	$valorhabilidadmenor="racional";
+	 	$vmayor["c"] = $valorhabilidadmayor;
+	 }
+
+	if($ppensamiento=$pemotividad)
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+	else
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+
+
+     if($ppercepcion>$pjuicio){
+	 	$mayor=$ppercepcion;
+	 	$menor=$pjuicio;
+	 	$valorhabilidadmayor="perceptivo";
+	 	$valorhabilidadmenor="jucioso";
+	 	$vmayor["d"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pjuicio;
+	 	$menor=$ppercepcion;
+	 	$valorhabilidadmayor="jucioso";
+	 	$valorhabilidadmenor="perceptivo";
+	 	$vmayor["d"] = $valorhabilidadmayor;
+	 }
+
+	if($ppercepcion=$pjuicio)
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+	else
+	{
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	}
+
+  
+//var_dump($vmayor);
+echo '<tr style="color:#66CCFF"><td></td><td>
+En conclusión. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral más completo y de acuerdo a las competencias requeridas que te hagan más funcional y con mejores relaciones y resultados profesionales.
+</td></td></tr>';
+
+echo '</table></div>'; 
+
+break;
+
+case 'ReporteFinal':
+
+//require_once 'indexlaov.php';
+header("location:indexlaov.php?q=0");
+
+break;
+default:
+$ansid=$oaid;
+}
+
+	}
+
+}
+?>
+<!--Resultados Parte2 laov end-->
+
+<!--Otros....-->
+<?php if(@$_GET['q']== 10) 
+{
+// $nombre=$_GET['nombre'];
+// $eidcomp=$_GET['eidcomp'];
+// $email=$_GET['correo'];
+
+//$q=mysqli_query($con,"SELECT * FROM rescomp WHERE eid='$eidcomp' AND email='$email' AND dateini='$hdate'" )or die('Error157');
+//$rowcount=mysqli_num_rows($q);
+
+echo  '<div class="panel">
+<center><h1 class="title" style="color:#660033">Competencia Wheel</h1></center>';
+
+
+echo'	
+<div style="width:30%"><canvas id="canvas" height="450" width="450"></canvas></div>
+		
+	<script>
+	var radarChartData = {
+		labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
+		datasets: [
+			{
+				label: "My First dataset",
+				fillColor: "rgba(220,220,220,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: [65,59,90,81,56,55,40]
+			},
+			{
+				label: "My Second dataset",
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(151,187,205,1)",
+				pointColor: "rgba(151,187,205,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(151,187,205,1)",
+				data: [28,48,40,19,96,27,100]
+			}
+		]
+	};
+	
+	window.onload = function(){
+		window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+			responsive: true
+		});
+	}
+
+	</script>
+	
+	</div>';
+
+
+
+}
+?>
+
+<!--Otros end....-->
+
+
+</div><!--col-md-12 closed-->
+</div> <!--ROW closed-->
+</div> <!--container closed-->
+</body>
+</html>
+
+Reporte PDF:
+
+<?php
+// Cargamos la librería dompdf que hemos instalado en la carpeta dompdf
+//require_once ('dompdf/dompdf_config.inc.php');
+// Include autoloader
+require_once 'dompdf/autoload.inc.php'; 
+ 
+// reference the Dompdf namespace 
+use Dompdf\Dompdf;
+include_once 'dbConnection.php';
+ 
+// Introducimos HTML de prueba
+//$result = mysqli_query($con,"SELECT * FROM user") or die('Error');
+//$rowcount=mysqli_num_rows($result);
+
+//$hdate="2019";
+//$hmail="lala@gmail.com";
+//heid="2222";
+$nombre=$_GET['nombre'];
+//$nombre="Yudis";
+
+//$eidcomp=$_GET['eidcomp'];
+//$eidcomp="5cace55fd91c5";
+//$eidbriggs="5c9bc33490e87";
+$eidcomp=$_GET['idexamencompetencias'];
+$eidbriggs=$_GET['idexamenmbriggs'];
+$email=$_GET['correo'];
+//$email="yudis@laov.com";
+
+
+$q2=mysqli_query($con,"SELECT * FROM history WHERE eid='$eidcomp' AND email='$email' " )or die('Error157'); 
+$rowcount=mysqli_num_rows($q2);
+
+if($rowcount==0){
+	echo "No se econtraron examenes para: $nombre - $eidcomp - $email";
+}
+else
+{
+	
+while($row=mysqli_fetch_array($q2)) 
+	{
+		$hsahi=$row['sahi'];
+		$hdate=$row['date'];
+		$hmail=$row['email'];
+		$heid=$row['eid'];
+	}
+
+	
+//$e=$_GET['tprueba'];
+//switch($e)
+//{
+//case 'Competencia':
+
+//Parte 1 del reporte de competencia
+$q=mysqli_query($con,"SELECT * FROM rescomp WHERE eid='$eidcomp' AND email='$email' AND dateini='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+$html='
+<!DOCTYPE html>
+<html lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- <link rel="stylesheet" href="css/bootstrap-theme.min.css"> -->
+<!-- <link rel="stylesheet" href="css/main.css"> -->
+<link rel="stylesheet" href="css/font.css">
+<script src="js/jquery.js" type="text/javascript"></script>
+
+<style>
+h1 {font-size: 40px;}
+h2 {font-size: 25px;}
+h3 {font-size: 25px;}
+p {font-size: 20px;}
+p2 {font-size: 25px;}
+
+@page { margin: 50px 25px; }
+ #header { position: fixed; left: 0px; top: -180px; right: 0px; height: 150px; background-color: orange; text-align: center; }
+    #footer { position: fixed; center: 0px; bottom: -140px; right: 0px; height: 150px; background-color: lightblue; text-align: center; }
+    #footer .page:after { content: counter(page, decimal); }
+
+</style>
+ 
+  	 <!-- ChartJS -->
+	<script src="chart.js/Chart.js"></script>
+	<meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
+		<style>
+			canvas{}
+		</style>
+<script src="js/bootstrap.min.js"  type="text/javascript"></script>		
+<link href="http://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+
+</head>
+<body>	
+<div id="header">
+</div>
+
+<div id="footer">
+    <p class="page">Pagina </p>
+  </div>
+  <div id="content">
+    
+  </div>
+
+
+<table>
+<tr><td style="width:40%"><IMG SRC="image\LogoKoanoFF2.JPG" WIDTH=252 HEIGHT=92 ALIGN=MIDDLE></td>
+<td align=center><h1 class="title" style="color:#9749eb"> Resultado de Test de competencias </h1></td>
+</tr>
+<tr>
+	<td></td>
+</tr>
+</table>
+
+<p>Nombre del Participante: '.$nombre.'<BR>
+Correo del Participante: '.$email.'</p><BR>
+
+<table FRAME="border" RULES="rows" WIDTH="75%" cellpadding="10" cellspacing="0"> 
+  <thead>
+    <tr BGCOLOR="#DDE0FC" >
+    	<th style="width:20%" scope="col" align=center>Tipo Competencia</th>
+	    <th style="width:50%" scope="col">Nombre de la competencia</th>
+	    <th style="width:30%" scope="col">Competencia Requerida</th>
+	    <th style="width:30%" scope="col">Competencia contestada</th>
+	    
+    </tr>
+  </thead>';
+  
+$c=0;
+$sumap=0;
+$sumap2=0;
+while($row=mysqli_fetch_array($q))
+	{
+	$email=$row['email'];
+	$cname=$row['cname'];
+	$cclas=$row['cclas'];
+	$cnivel=$row['cnivel'];
+	$cnreal=$row['cnreal'];
+	$dateini=$row['dateini'];
+	$etiqueta[$c]=$cname;
+	$datos1[$c]=$cnivel;
+	$datos2[$c]=$cnreal;
+	$c++;
+	$sumap=$sumap+$cnreal;
+	$sumap2=$sumap2+$cnivel;
+
+	$html.= '
+	<tbody>
+		<tr style="color:#990000">
+			<td style="width:20%">'.$cclas.'</td>
+			<td style="width:50%">'.$cname.' </td>
+			<td style="width:30%"><center>'.$cnivel.'</center></td>
+			<td style="width:30%"><center>'.$cnreal.'</center></td>
+			
+		</tr>'; 
+	 	 
+	}
+
+$promd=$sumap/$c;
+$promd2=$sumap2/$c;
+$html.= '</tbody>
+<tfoot>
+	<tr style="color:#9749eb">
+		<td></td>
+		<td><center>Promedio = &nbsp;</center></td>
+		<td><center>'.$promd2.'</center></td>
+		<td><center>'.$promd.'</center></td>
+		
+	</tr>
+</tfoot>
+</table>
+<BR>
+
+<div style="page-break-after:always;"></div>';
+
+
+//Termina Reporte 1
+//Parte 2 del reporte de competencia
+// inicia grafica....
+
+$html .= '<table>
+<tr><td style="width:40%"><IMG SRC="image\LogoKoanoFF2.JPG" WIDTH=252 HEIGHT=92 ALIGN=MIDDLE></td>
+<td align=center><h1 class="title" style="color:#9749eb"> Rueda de competencias </h1></td>
+</tr>
+<tr>
+	<td></td>
+</tr>
+</table>
+<BR><BR>
+
+<p>Nombre del Participante: '.$nombre.'<BR>
+Correo del Participante: '.$email.'</p><BR>
+
+<TABLE BORDER>
+<TR>
+	<TD BGCOLOR="rgba(200,0,0,0.2)">_____</TD>
+	<TD> Nivel Requerido. </TD>
+</TR>
+<TR>
+	<TD BGCOLOR="rgba(0,0,200,0.5)">_____</TD>
+	<TD> Nivel Contestado. </TD>
+</TR>
+</TABLE>
+<BR><BR>
+
+<center>
+<div style="width:30%">
+	<canvas id="canvas" height="450" width="450"></canvas>
+</div>
+</center>';
+
+$html .= '
+<script>
+var radarChartData = {
+		labels: ["'.$etiqueta[0].'", "'.$etiqueta[1].'", "'.$etiqueta[2].'", "'.$etiqueta[3].'", "'.$etiqueta[4].'", "'.$etiqueta[5].'", "'.$etiqueta[6].'", "'.$etiqueta[7].'", "'.$etiqueta[8].'", "'.$etiqueta[9].'"],
+		datasets: [
+			{
+				label: "Nivel Requerido",
+				fillColor: "rgba(200,0,0,0.2)",
+				strokeColor: "rgba(200,0,0,0.2)",
+				pointColor: "rgba(200,0,0,0.2)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(200,0,0,0.2)",
+				data: ["'.$datos1[0].'", "'.$datos1[1].'", "'.$datos1[2].'", "'.$datos1[3].'", "'.$datos1[4].'", "'.$datos1[5].'", "'.$datos1[6].'", "'.$datos1[7].'", "'.$datos1[8].'", "'.$datos1[9].'"]
+			},
+			
+			{
+				label: "Nivel Calificado",
+				fillColor: "rgba(0,0,200,0.2)",
+				strokeColor: "rgba(0,0,200,0.5)",
+				pointColor: "rgba(0,0,200,0.5)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(0,0,200,0.5)",
+				data: ["'.$datos2[0].'", "'.$datos2[1].'", "'.$datos2[2].'", "'.$datos2[3].'", "'.$datos2[4].'", "'.$datos2[5].'", "'.$datos2[6].'", "'.$datos2[7].'", "'.$datos2[8].'", "'.$datos2[9].'"]
+			}
+		]
+		 
+	};
+	
+	window.onload = function(){
+		window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+			responsive: true
+		});
+	}
+	</script>	
+	
+	
+	
+<div style="page-break-after:always;"></div>';
+	
+/*	';
+*/
+// Termina Grafica
+
+//Parte 3 del reporte de competencia
+$html .= '<table>
+<tr><td style="width:40%"><IMG SRC="image\LogoKoanoFF2.JPG" WIDTH=252 HEIGHT=92 ALIGN=MIDDLE></td>
+<td align=center><h1 class="title" style="color:#9749eb"> Resumen del Test de competencias </h1></td>
+</tr>
+
+</table>
+
+<p>Nombre del Participante: '.$nombre.'<BR>
+Correo del Participante: '.$email.'</p><BR>';
+
+$q=mysqli_query($con,"SELECT * FROM rescomp WHERE eid='$eidcomp' AND email='$email' AND dateini='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+$html .='<table FRAME="border" RULES="rows" WIDTH="75%" cellpadding="8" cellspacing="0"> 
+  <thead>
+    <tr BGCOLOR="#DDE0FC" >
+    	<th scope="col" align=center>Nombre de la competencia</th>
+	    <th scope="col" align=center>Porcentage de la competencia</th>
+	    <th scope="col" align=center>Comentarios</th>
+	    <th scope="col"></th>  
+    </tr>
+  </thead>';
+
+
+$c=0;
+$sumap=0;
+$sumap2=0;
+$porcent=0;
+
+while($row=mysqli_fetch_array($q) )
+{
+$email=$row['email'];
+$cname=$row['cname'];
+$cclas=$row['cclas'];
+$cnivel=$row['cnivel'];
+$cnreal=$row['cnreal'];
+$dateini=$row['dateini'];
+$etiqueta[$c]=$cname;
+$datos1[$c]=$cnivel;
+$datos2[$c]=$cnreal;
+$c++;
+$sumap=$sumap+$cnreal;
+$sumap2=$sumap2+$cnivel;
+$porcent=number_format($cnreal/$cnivel*100,2);
+//$nombre_format_francais = number_format($número, 2, ',', ' ');
+
+switch($porcent)
+{
+case ($porcent>100):
+$MensageResul="Excede espectativa del 100%";
+$icono="glyphicon glyphicon-ok";
+$coloricono="color:#009900";
+break;
+
+case (($porcent>=90) && ($porcent<=100)):
+$MensageResul="Cumple satisfactoriamente ";
+$icono="glyphicon glyphicon-ok-circle";
+$coloricono="color:#99cc32";
+break;
+
+case (($porcent>=50) && ($porcent<=89)):
+$MensageResul="Cubierto, pero debe de Mejorar";
+$icono="glyphicon glyphicon-ok-circle";
+$coloricono="color:#99cc32";
+break;
+
+case ($porcent<50):
+$MensageResul="No alcanza porcentage minimo para cubrir esta competencia";
+$icono="glyphicon glyphicon-remove-circle";
+$coloricono="color:#990000";
+break;
+
+default:
+$MensageResul="No encontro ningun valor";
+$icono="glyphicon glyphicon-ban-circle";
+}
+
+     $html .= '<tr style="color:#000099">
+     <td style="width:50%">'.$cname.' &nbsp;</td></span>
+     <td style="width:40%"><center>'.$porcent.'%</center></td>
+     <td style="width:50%">'.$MensageResul.'</td>
+     <td></td>
+     </tr>'; 
+ 	 
+}
+     $promd=$sumap/$c;
+     $promd2=$sumap2/$c;
+
+ $html .= '</table>
+
+<div style="page-break-after:always;"></div>';
+}
+
+
+/*
+
+
+<table FRAME="border" RULES="rows" WIDTH="75%" cellpadding="10" cellspacing="0">
+  
+  <thead>
+    <tr BGCOLOR="#DDE0FC" >
+    	<th scope="col" align=center>Num</th>
+	    <th scope="col">Nombre del Alumno</th>
+	    <th scope="col">Colegio</th>
+	    <th scope="col">Email</th>
+	    <th scope="col">Matricula</th>
+    </tr>
+  </thead>';
+
+$c=1;
+while($row = mysqli_fetch_array($result)) {
+	$name = $row['name'];
+	$mob = $row['matricula'];
+	$gender = $row['gender'];
+    $email = $row['email'];
+	$college = $row['college'];
+
+	$html .= '<tbody>
+	<tr>
+	    <th scope="row" align=Center>'.$c++.'</th>
+	    <td>'.$name.'</td>
+	    <td>'.$college.'</td>
+	    <td>'.$email.'</td>
+	    <td>'.$mob.'</td>
+	</tr>';
+	
+}
+$c=0;
+$html .= '</tbody>
+<tfoot>   
+    <tr>
+      <th colspan="4" scope="col" ALIGN=right>Numero total de registros</th>
+      <th scope="col" ALIGN=LEFT>'.$rowcount.'</th>
+    </tr>
+  </tfoot>
+  </table>';
+
+
+*/
+
+
+
+// case 'MBriggs':
+
+// Inicia Paso 1 - Conteo de respuestas 
+$q2=mysqli_query($con,"SELECT * FROM history WHERE eid='$eidbriggs' AND email='$email' " )or die('Error157'); 
+$rowcount=mysqli_num_rows($q2);
+
+if($rowcount==0){
+	echo "No se econtraron examenes para: $nombre - $eidbriggs - $email";
+}
+else
+{
+	
+while($row=mysqli_fetch_array($q2)) 
+	{
+		$hsahi=$row['sahi'];
+		$hdate=$row['date'];
+		$hmail=$row['email'];
+		$heid=$row['eid'];
+	}
+
+	
+$q=mysqli_query($con,"SELECT * FROM exaxuser WHERE eid='$eidbriggs' AND email='$email' AND date2='$hdate'" )or die('Error157');
+$rowcount=mysqli_num_rows($q);
+
+if($rowcount==0){	
+	echo "No se econtraron examenes para: $nombre   valor de $hdate  valor de $eidcomp";
+}
+
+$html .= '<table>
+<tr><td style="width:40%"><IMG SRC="image\LogoKoanoFF2.JPG" WIDTH=252 HEIGHT=92 ALIGN=MIDDLE></td>
+<td align=left><h1 class="title" style="color:#9749eb"> Resultado del Test de MBRIGGS </h1></td>
+</tr>
+</table>
+
+<p>Nombre del Participante: '.$nombre.'<BR>
+Correo del Participante: '.$email.'</p>';
+
+$c=0;
+$sumap=0;
+while($row=mysqli_fetch_array($q) )
+{
+$email=$row['email'];
+//$cname=$row['cname'];
+//$cclas=$row['cclas'];
+//$cnivel=$row['cnivel'];
+$level=$row['level'];
+$dateini=$row['date'];
+
+$qjuicio=$row['juicio'];
+$qpercepcion=$row['percepcion'];
+$qsensacion=$row['sensacion'];
+$qintuicion=$row['intuicion'];
+$qextrovertido=$row['extrovertido'];
+$qintrovertido=$row['introvertido'];
+$qemotividad=$row['emotividad'];
+$qpensamiento=$row['pensamiento'];
+$c++;
+ 	 
+}
+$html .= '<table FRAME="box" WIDTH="70%">
+<tr style="color:#66CCFF">
+	<th></th>
+	<th><p>Total de Preguntas</p></th>
+	<th></td>
+	<th><p>'.$level.'</p></th>
+</tr>
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Juicio</td>
+	<td></td>
+	<td>'.$qjuicio.'</td>
+</tr>
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Percepcion</td>
+	<td></td>
+	<td>'.$qpercepcion.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Sensacion</td>
+	<td></td>
+	<td>'.$qsensacion.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Intuicion </td>
+	<td></td>
+	<td>'.$qintuicion.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Extrovertido</td>
+	<td></td>
+	<td>'.$qextrovertido.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Introvertido</td>
+	<td></td>
+	<td>'.$qintrovertido.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Emotividad</td>
+	<td></td>
+	<td>'.$qemotividad.'</td>
+</tr> 
+<tr style="color:#99cc32">
+	<td>* </td>
+	<td>Pensamiento</td>
+	<td></td>
+	<td>'.$qpensamiento.'</td>
+</tr>
+     
+</table>';
+}
+
+// Inicia Paso 2 - Comparativa de Resultados
+// calculando promedios
+$pextrovertido=$qextrovertido/($qextrovertido+$qintrovertido)*100;
+$pintrovertido=$qintrovertido/($qextrovertido+$qintrovertido)*100;
+$pintuicion=$qintuicion/($qintuicion+$qsensacion)*100;
+$psensacion=$qsensacion/($qintuicion+$qsensacion)*100;
+$ppensamiento=$qpensamiento/($qpensamiento+$qemotividad)*100;
+$pemotividad=$qemotividad/($qpensamiento+$qemotividad)*100;
+$ppercepcion=$qpercepcion/($qjuicio+$qpercepcion)*100;
+$pjuicio=$qjuicio/($qjuicio+$qpercepcion)*100;
+
+
+$pextrovertido=number_format($pextrovertido, 2, '.', '');
+$pintrovertido=number_format($pintrovertido, 2, '.', '');
+$pintuicion=number_format($pintuicion, 2, '.', '');
+$psensacion=number_format($psensacion, 2, '.', '');
+$ppensamiento=number_format($ppensamiento, 2, '.', '');
+$pemotividad=number_format($pemotividad, 2, '.', '');
+$ppercepcion=number_format($ppercepcion, 2, '.', '');
+$pjuicio=number_format($pjuicio, 2, '.', '');
+
+$html .=  '
+<center><h2 class="title" style="color:#660033">Comparativa de Resultados MBriggs</h2></center>';
+
+$html .= '<table FRAME="border" RULES="rows" WIDTH="70%" cellpadding="0" cellspacing="0">
+<tr style="color:#66CCFF"><td></td><td><p>Nombre de la cualidad </p></td><td></td><td><p>Porcentage %</p></td></tr>
+<tr style="color:#99cc32"><td>* </td><td>Juicio &nbsp;</td><td></td><td>'.$pjuicio.'</td></tr>
+<tr style="color:#99cc32"><td>* </td><td>Percepcion &nbsp;</td><td></td><td>'.$ppercepcion.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Sensacion &nbsp;</td><td></td><td>'.$psensacion.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Intuicion &nbsp;</td><td></td><td>'.$pintuicion.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Extrovertido &nbsp;</td><td></td><td>'.$pextrovertido.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Introvertido &nbsp;</td><td></td><td>'.$pintrovertido.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Emotividad &nbsp;</td><td></td><td>'.$pemotividad.'</td></tr> 
+<tr style="color:#99cc32"><td>* </td><td>Pensamiento &nbsp;</td><td></td><td>'.$ppensamiento.'</td></tr>';
+     
+$html .= '</table>
+<div style="page-break-after:always;"></div>';     
+
+$html .= '<table>
+<tr><td style="width:40%"><IMG SRC="image\LogoKoanoFF2.JPG" WIDTH=252 HEIGHT=92 ALIGN=MIDDLE></td>
+<td align=left><h1 font size="7" class="title" style="color:#660033"> Resumen de test MBriggs para '.$nombre.' </h1></td>
+</tr>
+<tr>
+	<td></td>
+</tr>
+</table>
+<BR><BR>
+
+
+<table>
+<tr style="color:#66CCFF">
+	<th><p2>'.$nombre.', De acuerdo a los resultados obtenidos eres: </p2></th>
+</tr>
+</table><BR>
+<table>';
+   
+$vmayor = array(
+    "a" => "bar",
+    "b" => "foo",
+    "c" => -100,
+    "d" => 100,
+);     
+     if($pextrovertido>$pintrovertido){
+	 	$mayor=$pextrovertido;
+	 	$menor=$pintrovertido;
+	 	$valorhabilidadmayor="extrovertido";
+	 	$valorhabilidadmenor="introvertido";
+	 	$vmayor["a"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pintrovertido;
+	 	$menor=$pextrovertido;
+	 	$valorhabilidadmayor="introvertido";
+	 	$valorhabilidadmenor="extrovertido";
+	 	$vmayor["a"] = $valorhabilidadmayor;
+	 }
+	 
+	if($pextrovertido=$pintrovertido)
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+	else
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+	
+
+     if($pintuicion>$psensacion){
+	 	$mayor=$pintuicion;
+	 	$menor=$psensacion;
+	 	$valorhabilidadmayor="intuitivo";
+	 	$valorhabilidadmenor="sensitivo";
+	 	$vmayor["b"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$psensacion;
+	 	$menor=$pintuicion;
+	 	$valorhabilidadmayor="sensitivo";
+	 	$valorhabilidadmenor="intuitivo";
+	 	$vmayor["b"] = $valorhabilidadmayor;
+	 }
+	 
+	if($pintuicion=$psensacion)
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+	else
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+
+     if($ppensamiento>$pemotividad){
+	 	$mayor=$ppensamiento;
+	 	$menor=$pemotividad;
+	 	$valorhabilidadmayor="racional";
+	 	$valorhabilidadmenor="emotivo";
+	 	$vmayor["c"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pemotividad;
+	 	$menor=$ppensamiento;
+	 	$valorhabilidadmayor="emotivo";
+	 	$valorhabilidadmenor="racional";
+	 	$vmayor["c"] = $valorhabilidadmayor;
+	 }
+
+	if($ppensamiento=$pemotividad)
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+	else
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+
+
+     if($ppercepcion>$pjuicio){
+	 	$mayor=$ppercepcion;
+	 	$menor=$pjuicio;
+	 	$valorhabilidadmayor="perceptivo";
+	 	$valorhabilidadmenor="jucioso";
+	 	$vmayor["d"] = $valorhabilidadmayor;
+	 }
+	 else
+	 {
+	 	$mayor=$pjuicio;
+	 	$menor=$ppercepcion;
+	 	$valorhabilidadmayor="jucioso";
+	 	$valorhabilidadmenor="perceptivo";
+	 	$vmayor["d"] = $valorhabilidadmayor;
+	 }
+
+	if($ppercepcion=$pjuicio)
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' %  '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+	else
+	{
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % más '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	}
+
+  
+//var_dump($vmayor);
+$html .= '</table><BR><BR>
+<table>
+<tr style="color:#660033">
+	<td><p2>   En conclusión. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral más completo y de acuerdo a las competencias requeridas que te hagan más funcional y con mejores relaciones y resultados profesionales.</p2></td>
+</tr>';
+
+$html .= '</table></p2><BR><BR>'; 
+
+
+
+
+$html .='</body></html>';
+//echo $html; exit;
+
+
+
+// Instantiate and use the dompdf class
+$dompdf = new Dompdf();
+
+// Load HTML content
+//$dompdf->loadHtml('<h1>Welcome to CodexWorld.com</h1>');
+//$dompdf->loadHtml(utf8_decode($html));
+$dompdf->loadHtml($html);
+
+// (Optional) Setup the paper size and orientation
+//$dompdf->setPaper('A4', 'landscape');
+$dompdf->setPaper('letter', 'portrait');
+
+// Render the HTML as PDF
+$dompdf->render();
+
+// Output the generated PDF to Browser
+$dompdf->stream("usuarios03.pdf");
+ 	
+?>
