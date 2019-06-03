@@ -1,3 +1,7 @@
+sonar.c.file.suffixes=-
+sonar.cpp.file.suffixes=-
+sonar.objc.file.suffixes=-
+
 <!DOCTYPE html>
 <html lang="es">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -272,7 +276,7 @@ echo "El nombre de tu escuela es:";
 </body>
 </html>
 
-Men˙ del estudiante:
+Men√∫ del estudiante:
 <!DOCTYPE html>
 <html lang="es">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -441,7 +445,7 @@ $total=@$_GET['t'];
 
 echo ' 
 <div class="row">
-<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opciÛn de acuerdo a lo que se te pregunte. </b></span>';
+<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opci√≥n de acuerdo a lo que se te pregunte. </b></span>';
 
 
 $q=mysqli_query($con,"SELECT * FROM questions WHERE eid='$eid' AND sn='$sn' " );
@@ -481,7 +485,7 @@ echo'<br /><button type="submit" class="btn btn-primary"><span class="glyphicon 
 if(@$_GET['q']== 'result' && @$_GET['eid']) 
 {
 echo  '<div class="panel">
-<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesiÛn te dar· tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
+<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesi√≥n te dar√° tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
 
 echo '<br><br><br>';	
 	
@@ -638,7 +642,7 @@ $total=@$_GET['t'];
 
 echo ' 
 <div class="row">
-<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opciÛn de acuerdo a lo que se te pregunte. </b></span>';
+<span class="title1" style="margin-left:10%;font-size:14px;"><b>Favor de contestar las siguientes preguntas seleccionando por lo menos una opci√≥n de acuerdo a lo que se te pregunte. </b></span>';
 
 
 $q=mysqli_query($con,"SELECT * FROM competencias WHERE eid='$eid' AND sn='$sn' " );
@@ -697,7 +701,7 @@ if(@$_GET['q']== 'result2' && @$_GET['eid'])
 {
 
 echo  '<div class="panel">
-<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesiÛn te dar· tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
+<center><h1 class="title" style="color:#660033">!!! GRACIAS POR TU PARTICIPACION...!!! <br><br>Prueba terminada exitosamente<br><br><br>  En breve, tu Coach en la sesi√≥n te dar√° tus resultados</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
 
 echo '<br><br><br>';
 	
@@ -1217,9 +1221,9 @@ echo '<b>Pregunta numero&nbsp;'.$i.'&nbsp;:</><br /><!-- Text input-->
     <select id="'.$i.'2" name="'.$i.'2" placeholder="Selecciona una Opcion que relacione a respuesta a '.$i.'" class="form-control input-md" >
    <option value="a">Selecciona una Opcion</option>
   <option value="Juicio">Juicio</option>
-  <option value="PercepciÛn">PercepciÛn</option>
-  <option value="SensaciÛn">SensaciÛn</option>
-  <option value="IntuiciÛn">IntuiciÛn</option> 
+  <option value="Percepci√≥n">Percepci√≥n</option>
+  <option value="Sensaci√≥n">Sensaci√≥n</option>
+  <option value="Intuici√≥n">Intuici√≥n</option> 
   <option value="Extrovertido">Extrovertido</option> 
   <option value="Introvertido">Introvertido</option> 
   <option value="Emotividad">Emotividad</option> 
@@ -1243,9 +1247,9 @@ echo '<b>Pregunta numero&nbsp;'.$i.'&nbsp;:</><br /><!-- Text input-->
     <select id="'.$i.'4" name="'.$i.'4" placeholder="Escribe La Relacion con la pregunta '.$i.'" class="form-control input-md" >
    <option value="b">Selecciona una Opcion que relacione a respuesta b</option>
    <option value="Juicio">Juicio</option>
-  <option value="PercepciÛn">PercepciÛn</option>
-  <option value="SensaciÛn">SensaciÛn</option>
-  <option value="IntuiciÛn">IntuiciÛn</option> 
+  <option value="Percepci√≥n">Percepci√≥n</option>
+  <option value="Sensaci√≥n">Sensaci√≥n</option>
+  <option value="Intuici√≥n">Intuici√≥n</option> 
   <option value="Extrovertido">Extrovertido</option> 
   <option value="Introvertido">Introvertido</option> 
   <option value="Emotividad">Emotividad</option> 
@@ -1408,7 +1412,7 @@ echo '<b>Nombre de la competencia &nbsp;'.$i.'&nbsp;:</><br /><!-- Text input-->
   <div class="col-md-12">
     <select id="'.$i.'1" name="'.$i.'1" placeholder="Selecciona una clasificacion para la competencia '.$i.'" class="form-control input-md" >
    <option value="a">Selecciona una Clasificacion</option>
-  <option value="TÈcnicas">TÈcnicas</option>
+  <option value="T√©cnicas">T√©cnicas</option>
   <option value="Habilidades">Habilidades</option>
   
   </select>
@@ -1698,7 +1702,7 @@ $c++;
 $sumap=$sumap+$cnreal;
 $sumap2=$sumap2+$cnivel;
 $porcent=number_format($cnreal/$cnivel*100,2);
-//$nombre_format_francais = number_format($n˙mero, 2, ',', ' ');
+//$nombre_format_francais = number_format($n√∫mero, 2, ',', ' ');
 
 switch($porcent)
 {
@@ -1877,7 +1881,7 @@ $vmayor = array(
 	}
 	else
 	{
-	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
 	}
 	
 
@@ -1903,7 +1907,7 @@ $vmayor = array(
 	}
 	else
 	{
-	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
 	}
 
      if($ppensamiento>$pemotividad){
@@ -1928,7 +1932,7 @@ $vmayor = array(
 	}
 	else
 	{
-	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
 	}
 
 
@@ -1954,13 +1958,13 @@ $vmayor = array(
 	}
 	else
 	{
-	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
+	echo '<tr style="color:#66CCFF"><td></td><td>'.$nombre.' eres '.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</td></td></tr>';
 	}
 
   
 //var_dump($vmayor);
 echo '<tr style="color:#66CCFF"><td></td><td>
-En conclusiÛn. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral m·s completo y de acuerdo a las competencias requeridas que te hagan m·s funcional y con mejores relaciones y resultados profesionales.
+En conclusi√≥n. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral m√°s completo y de acuerdo a las competencias requeridas que te hagan m√°s funcional y con mejores relaciones y resultados profesionales.
 </td></td></tr>';
 
 echo '</table></div>'; 
@@ -2054,7 +2058,7 @@ echo'
 Reporte PDF:
 
 <?php
-// Cargamos la librerÌa dompdf que hemos instalado en la carpeta dompdf
+// Cargamos la librer√≠a dompdf que hemos instalado en la carpeta dompdf
 //require_once ('dompdf/dompdf_config.inc.php');
 // Include autoloader
 require_once 'dompdf/autoload.inc.php'; 
@@ -2354,7 +2358,7 @@ $c++;
 $sumap=$sumap+$cnreal;
 $sumap2=$sumap2+$cnivel;
 $porcent=number_format($cnreal/$cnivel*100,2);
-//$nombre_format_francais = number_format($n˙mero, 2, ',', ' ');
+//$nombre_format_francais = number_format($n√∫mero, 2, ',', ' ');
 
 switch($porcent)
 {
@@ -2654,7 +2658,7 @@ $vmayor = array(
 	}
 	else
 	{
-	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
 	}
 	
 
@@ -2680,7 +2684,7 @@ $vmayor = array(
 	}
 	else
 	{
-	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
 	}
 
      if($ppensamiento>$pemotividad){
@@ -2705,7 +2709,7 @@ $vmayor = array(
 	}
 	else
 	{
-	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
 	}
 
 
@@ -2731,7 +2735,7 @@ $vmayor = array(
 	}
 	else
 	{
-	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m·s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
+	$html .= '<tr style="color:#660033"><td><p2>'.$mayor.' % m√°s '.$valorhabilidadmayor.' y '.$menor.' % '.$valorhabilidadmenor.'</p2></td></tr>';
 	}
 
   
@@ -2739,7 +2743,7 @@ $vmayor = array(
 $html .= '</table><BR><BR>
 <table>
 <tr style="color:#660033">
-	<td><p2>   En conclusiÛn. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral m·s completo y de acuerdo a las competencias requeridas que te hagan m·s funcional y con mejores relaciones y resultados profesionales.</p2></td>
+	<td><p2>   En conclusi√≥n. '.$nombre.' eres una persona '.$vmayor["a"].', '.$vmayor["b"].', '.$vmayor["c"].' y '.$vmayor["d"].'. Te recomendamos tratar de incrementar los valores debajo de 35% a fin de equilibrar con el par contrario para lograr un equilibrio de preponderancia cerebral m√°s completo y de acuerdo a las competencias requeridas que te hagan m√°s funcional y con mejores relaciones y resultados profesionales.</p2></td>
 </tr>';
 
 $html .= '</table></p2><BR><BR>'; 
